@@ -29,11 +29,13 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.List;
 
 import static net.creationreborn.launcher.builder.Builder.LOGGER;
@@ -109,7 +111,7 @@ public class CreeperHostIntegration {
         return analytics;
     }
 
-    public List<ManifestEntry> getEntries() {
+    public List<ManifestEntry> getEntries() throws Exception {
         List<ManifestEntry> entries = Lists.newArrayList();
         for (Version.File file : version.getFiles()) {
             if (file.getSize() <= 0) {
@@ -120,7 +122,7 @@ public class CreeperHostIntegration {
             FileInstall fileInstall = new FileInstall();
             fileInstall.setDestination(file.getPath() + file.getName());
             fileInstall.setSize(file.getSize());
-            fileInstall.setUrl(file.getUrl());
+            fileInstall.setUrl(decodeURL(file.getUrl()));
             entries.add(fileInstall);
         }
 
@@ -143,6 +145,15 @@ public class CreeperHostIntegration {
         }
 
         return null;
+    }
+
+    private String decodeURL(String source) throws UnsupportedEncodingException {
+        String decodedSource = URLDecoder.decode(source.replace("+", "%2B"), "UTF-8");
+        if (!source.equals(decodedSource)) {
+            LOGGER.info("Decoded " + source + " -> " + decodedSource);
+        }
+
+        return decodedSource;
     }
 
     /**
