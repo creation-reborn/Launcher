@@ -16,10 +16,12 @@
 
 package net.creationreborn.launcher.builder.integration.creeperhost.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Modpack {
 
     @JsonProperty
@@ -30,6 +32,9 @@ public class Modpack {
 
     @JsonProperty
     private List<Art> art;
+
+    @JsonProperty
+    private List<Object> links;
 
     @JsonProperty
     private List<Author> authors;
@@ -48,6 +53,12 @@ public class Modpack {
 
     @JsonProperty
     private long refreshed;
+
+    @JsonProperty
+    private String notification;
+
+    @JsonProperty
+    private Rating rating;
 
     @JsonProperty
     private String status;
@@ -79,6 +90,10 @@ public class Modpack {
         return art;
     }
 
+    public List<Object> getLinks() {
+        return links;
+    }
+
     public List<Author> getAuthors() {
         return authors;
     }
@@ -101,6 +116,14 @@ public class Modpack {
 
     public long getRefreshed() {
         return refreshed;
+    }
+
+    public String getNotification() {
+        return notification;
+    }
+
+    public Rating getRating() {
+        return rating;
     }
 
     public String getStatus() {
@@ -134,6 +157,9 @@ public class Modpack {
 
         @JsonProperty
         private int height;
+
+        @JsonProperty
+        private boolean compressed;
 
         @JsonProperty
         private String url;
@@ -221,6 +247,79 @@ public class Modpack {
 
         public long getUpdated() {
             return updated;
+        }
+    }
+
+    public static class Rating {
+
+        @JsonProperty
+        private long id;
+
+        @JsonProperty
+        private boolean configured;
+
+        @JsonProperty
+        private boolean verified;
+
+        @JsonProperty
+        private int age;
+
+        @JsonProperty
+        private boolean gambling;
+
+        @JsonProperty
+        private boolean frightening;
+
+        @JsonProperty
+        private boolean alcoholdrugs;
+
+        @JsonProperty
+        private boolean nuditysexual;
+
+        @JsonProperty
+        private boolean sterotypeshate;
+
+        @JsonProperty
+        private boolean languageviolence;
+
+        public long getId() {
+            return id;
+        }
+
+        public boolean isConfigured() {
+            return configured;
+        }
+
+        public boolean isVerified() {
+            return verified;
+        }
+
+        public int getAge() {
+            return age;
+        }
+
+        public boolean isGambling() {
+            return gambling;
+        }
+
+        public boolean isFrightening() {
+            return frightening;
+        }
+
+        public boolean isAlcoholdrugs() {
+            return alcoholdrugs;
+        }
+
+        public boolean isNuditysexual() {
+            return nuditysexual;
+        }
+
+        public boolean isSterotypeshate() {
+            return sterotypeshate;
+        }
+
+        public boolean isLanguageviolence() {
+            return languageviolence;
         }
     }
 

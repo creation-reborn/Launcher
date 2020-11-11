@@ -16,10 +16,12 @@
 
 package net.creationreborn.launcher.builder.integration.creeperhost.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Version {
 
     @JsonProperty
@@ -41,13 +43,19 @@ public class Version {
     private long refreshed;
 
     @JsonProperty
-    private String status;
-
-    @JsonProperty
     private String changelog;
 
     @JsonProperty
     private long parent;
+
+    @JsonProperty
+    private String notification;
+
+    @JsonProperty
+    private List<Object> links;
+
+    @JsonProperty
+    private String status;
 
     @JsonProperty
     private long id;
@@ -85,16 +93,24 @@ public class Version {
         return refreshed;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
     public String getChangelog() {
         return changelog;
     }
 
     public long getParent() {
         return parent;
+    }
+
+    public String getNotification() {
+        return notification;
+    }
+
+    public List<Object> getLinks() {
+        return links;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     public long getId() {
