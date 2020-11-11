@@ -151,23 +151,27 @@ public class CreeperHostIntegration {
      */
     private URL filterURL(String source) throws MalformedURLException, URISyntaxException {
         URI uri = new URI(source);
-        if (uri.getHost().equals("api.modpacks.ch")) {
+        if (uri.getHost().equals(API_HOST)) {
             if (uri.getPath().startsWith("/public/modpack/")) {
                 String path = uri.getPath();
                 if (path.endsWith("/")) {
                     path = path.substring(0, path.length() - 1);
                 }
 
-                URL url = new URI(
+                URL filteredUrl = new URI(
                         "https",
                         API_HOST,
                         path,
-                        null,
+                        uri.getQuery(),
                         uri.getFragment()
                 ).toURL();
 
-                LOGGER.info("Filtered " + source + " -> " + url.toExternalForm());
-                return url;
+                String filteredSource = filteredUrl.toExternalForm();
+                if (!source.equals(filteredSource)) {
+                    LOGGER.info("Filtered " + source + " -> " + filteredSource);
+                }
+
+                return filteredUrl;
             }
         }
 
