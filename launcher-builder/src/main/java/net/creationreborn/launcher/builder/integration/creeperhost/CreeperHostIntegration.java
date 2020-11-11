@@ -112,6 +112,11 @@ public class CreeperHostIntegration {
     public List<ManifestEntry> getEntries() {
         List<ManifestEntry> entries = Lists.newArrayList();
         for (Version.File file : version.getFiles()) {
+            if (file.getSize() <= 0) {
+                LOGGER.warning(String.format("Ignoring %s as it has an invalid file size", file.getName()));
+                continue;
+            }
+
             FileInstall fileInstall = new FileInstall();
             fileInstall.setDestination(file.getPath() + file.getName());
             fileInstall.setSize(file.getSize());
