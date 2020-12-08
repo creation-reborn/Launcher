@@ -93,6 +93,8 @@ public class ProfileSelectionDialog extends JDialog {
         pack();
         setLocationRelativeTo(owner);
 
+        playButton.requestFocusInWindow();
+
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
