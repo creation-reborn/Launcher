@@ -45,6 +45,15 @@ public class VersionManifest {
         return null;
     }
 
+    // Creation Reborn - Fix Deserialization
+    public void setArguments(MinecraftArguments minecraftArguments) {
+        if (minecraftArguments == null) {
+            return;
+        }
+
+        this.arguments = minecraftArguments;
+    }
+
     public void setMinecraftArguments(String minecraftArguments) {
         MinecraftArguments result = new MinecraftArguments();
         result.setGameArguments(new ArrayList<GameArgument>());
