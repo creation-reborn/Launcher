@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.skcraft.launcher.install.InstallLog;
 import com.skcraft.launcher.install.Installer;
 import com.skcraft.launcher.install.UpdateCache;
+import com.skcraft.launcher.model.loader.ProcessorEntry;
 import lombok.Data;
 import lombok.ToString;
 import net.creationreborn.launcher.model.modpack.FileInstall;
@@ -28,6 +29,8 @@ import java.io.File;
         // Creation Reborn
         @JsonSubTypes.Type(value = FileInstall.class, name = "file"),
         @JsonSubTypes.Type(value = ZipFileInstall.class, name = "zip_file")
+        @JsonSubTypes.Type(value = FileInstall.class, name = "file"),
+        @JsonSubTypes.Type(value = ProcessorEntry.class, name = "process")
 })
 @Data
 @ToString(exclude = "manifest")
