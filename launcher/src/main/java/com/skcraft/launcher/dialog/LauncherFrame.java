@@ -405,6 +405,13 @@ public class LauncherFrame extends JFrame {
 
         @Override
         public void gameClosed() {
+            // Creation Reborn - Prevent opening multiple LauncherFrames
+            LauncherFrame frame = frameRef.get();
+            if (frame != null) {
+                frame.setVisible(true);
+                return;
+            }
+
             launcher.showLauncherWindow();
         }
     }
