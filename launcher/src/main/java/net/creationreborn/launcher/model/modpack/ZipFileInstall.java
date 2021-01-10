@@ -47,25 +47,22 @@ public class ZipFileInstall extends FileInstall {
         URL url = new URL(getUrl());
 
         Preconditions.checkState(getSize() > 0, "Invalid Size");
-        if (shouldUpdate(cache, targetFile)) {
-            File tempFile = installer.getDownloader().download(url, getDestination(), getSize(), getDestination());
-            installer.queue(new InstallLogZipExtract(log, tempFile, targetFile, name -> {
-                if (getExtracts().isEmpty()) {
-                    return name;
-                }
+        File tempFile = installer.getDownloader().download(url, getDestination(), getSize(), getDestination());
+        installer.queue(new InstallLogZipExtract(log, tempFile, targetFile, name -> {
+            if (getExtracts().isEmpty()) {
+                return name;
+            }
 
-                for (Map.Entry<String, String> entry : getExtracts().entrySet()) {
-                    if (name.matches(entry.getKey())) {
-                        return name.replaceAll(entry.getKey(), entry.getValue());
-                    }
+            for (Map.Entry<String, String> entry : getExtracts().entrySet()) {
+                if (name.matches(entry.getKey())) {
+                    return name.replaceAll(entry.getKey(), entry.getValue());
                 }
+            }
 
-                return null;
-            }));
-            installer.queue(new FileDeleter(tempFile));
-        } else {
-            log.add(getDestination(), getDestination());
-        }
+            return null;
+        }));
+
+        installer.queue(new FileDeleter(tempFile));
     }
 
     public Map<String, String> getExtracts() {
