@@ -14,6 +14,7 @@ import java.io.InputStream;
 public class FileUtils {
 	public static DownloadableFile saveStreamToObjectsDir(InputStream stream, File outputDir) throws IOException {
 		byte[] input = ByteStreams.toByteArray(stream);
+		@SuppressWarnings({"deprecation", "UnstableApiUsage"})
 		HashFunction hf = Hashing.sha1();
 
 		String fileHash = hf.hashBytes(input).toString();
@@ -35,6 +36,7 @@ public class FileUtils {
 	public static String getShaHash(File file) throws IOException {
 		FileInputStream stream = new FileInputStream(file);
 		byte[] input = ByteStreams.toByteArray(stream);
+		@SuppressWarnings({"deprecation", "UnstableApiUsage"})
 		String res = Hashing.sha1().hashBytes(input).toString();
 
 		stream.close();
