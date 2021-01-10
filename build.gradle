@@ -19,7 +19,7 @@ subprojects {
     targetCompatibility = 1.8
 
     group = "com.skcraft"
-    version = "1.0.11"
+    version = "1.0.12"
 
     repositories {
         jcenter()
