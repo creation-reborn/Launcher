@@ -1,5 +1,5 @@
 plugins {
-    id 'application'
+    id "application"
     id "com.github.johnrengelman.shadow"
     id "io.franzbecker.gradle-lombok"
 }
@@ -16,12 +16,6 @@ dependencies {
     compile(project(path: ":launcher"))
     compile("org.apache.commons:commons-compress:1.20")
     compile("org.tukaani:xz:1.8")
-}
-
-jar {
-    manifest {
-        attributes("Main-Class": "com.skcraft.launcher.builder.PackageBuilder")
-    }
 }
 
 shadowJar {
