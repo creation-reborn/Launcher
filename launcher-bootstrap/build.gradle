@@ -2,9 +2,14 @@ plugins {
     id "application"
     id "com.github.johnrengelman.shadow"
     id "io.franzbecker.gradle-lombok"
+    id "net.kyori.blossom"
 }
 
 mainClassName = "com.skcraft.launcher.Bootstrap"
+
+blossom {
+    replaceToken("@version@", version)
+}
 
 configurations {
     jar.enabled = false

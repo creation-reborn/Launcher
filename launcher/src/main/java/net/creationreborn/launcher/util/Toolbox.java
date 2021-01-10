@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 
 public class Toolbox {
 
-    public static final String USER_AGENT = "Mozilla/5.0 (Java) CRLauncher";
+    public static final String USER_AGENT = String.format("CRLauncher/@version@ (%s; +https://creationreborn.net/)", System.getProperty("os.name"));
     private static final Logger LOGGER = Logger.getLogger(Toolbox.class.getName());
 
     /**
