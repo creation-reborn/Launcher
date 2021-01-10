@@ -28,7 +28,7 @@ import java.io.File;
 @JsonSubTypes({
         // Creation Reborn
         @JsonSubTypes.Type(value = FileInstall.class, name = "file"),
-        @JsonSubTypes.Type(value = ZipFileInstall.class, name = "zip_file")
+        @JsonSubTypes.Type(value = ZipFileInstall.class, name = "zip_file"),
         @JsonSubTypes.Type(value = FileInstall.class, name = "file"),
         @JsonSubTypes.Type(value = ProcessorEntry.class, name = "process")
 })

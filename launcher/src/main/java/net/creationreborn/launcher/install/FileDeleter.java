@@ -16,6 +16,7 @@
 
 package net.creationreborn.launcher.install;
 
+import com.skcraft.launcher.Launcher;
 import com.skcraft.launcher.install.InstallTask;
 
 import java.io.File;
@@ -34,7 +35,7 @@ public class FileDeleter implements InstallTask {
     }
 
     @Override
-    public void execute() throws Exception {
+    public void execute(Launcher launcher) throws Exception {
         FileDeleter.log.log(Level.INFO, "Deleting {0}...", new Object[]{from.getAbsoluteFile()});
         from.delete();
     }

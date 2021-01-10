@@ -254,7 +254,7 @@ public class Runner implements Callable<Process>, ProgressObservable {
         }
 
         List<GameArgument> javaArguments = versionManifest.getArguments().getJvmArguments();
-        StrSubstitutor substitutor = new StrSubstitutor(getCommandSubstitutions());
+        StringSubstitutor substitutor = new StringSubstitutor(getCommandSubstitutions());
         for (GameArgument arg : javaArguments) {
             if (arg.shouldApply(environment, featureList)) {
                 for (String subArg : arg.getValues()) {

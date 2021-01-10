@@ -91,7 +91,7 @@ public class OldForgeLoaderProcessor implements ILoaderProcessor {
 
 						Files.createParentDirs(extractPath);
 						ByteStreams.copy(closer.register(jarFile.getInputStream(libraryEntry)),
-								Files.newOutputStreamSupplier(extractPath));
+								Files.asByteSink(extractPath).openStream());
 					} else {
 						log.warning("Could not find the file '" + filePath + "' in "
 								+ loaderJar.getAbsolutePath()

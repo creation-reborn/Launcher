@@ -17,6 +17,7 @@
 package net.creationreborn.launcher.install;
 
 import com.google.common.io.Files;
+import com.skcraft.launcher.Launcher;
 import com.skcraft.launcher.install.InstallLog;
 import com.skcraft.launcher.install.InstallTask;
 import org.apache.commons.io.IOUtils;
@@ -54,7 +55,7 @@ public class InstallLogZipExtract implements InstallTask {
     }
 
     @Override
-    public void execute() throws IOException {
+    public void execute(Launcher launcher) throws IOException {
         InstallLogZipExtract.log.log(Level.INFO, "Extracting to {0} (from {1})...", new Object[]{to.getAbsoluteFile(), from.getName()});
         try (ZipInputStream inputStream = new ZipInputStream(Files.asByteSource(from).openBufferedStream())) {
             to.getParentFile().mkdirs();
