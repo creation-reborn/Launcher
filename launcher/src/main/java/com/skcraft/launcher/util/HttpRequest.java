@@ -134,7 +134,14 @@ public class HttpRequest implements Closeable, ProgressObservable {
             throw new IOException("Too many redirects!");
         }
 
-        HttpURLConnection conn = (HttpURLConnection) reformat(url).openConnection();
+        // Creation Reborn
+        HttpURLConnection conn;
+        if (redirectCount == 0) {
+            conn = (HttpURLConnection) reformat(url).openConnection();
+        } else {
+            conn = (HttpURLConnection) url.openConnection();
+        }
+
         // Creation Reborn
         // conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Java) SKMCLauncher");
         conn.setRequestProperty("User-Agent", Toolbox.USER_AGENT);
@@ -174,10 +181,12 @@ public class HttpRequest implements Closeable, ProgressObservable {
             case 307:
             case 308:
                 String location = conn.getHeaderField("Location");
-                location = URLDecoder.decode(location, "UTF-8");
+                // Creation Reborn
+                // location = URLDecoder.decode(location, "UTF-8");
                 redirectCount++;
 
-                return runRequest(new URL(this.url, location));
+                // Creation Reborn
+                return runRequest(new URL(conn.getURL(), location));
             default:
                 break;
         }
