@@ -114,6 +114,59 @@ public class MicrosoftIntegration {
         }
     }
 
+    public static void refresh(Account account, Progress progress) throws Exception {
+        if (refreshMinecraft(account, progress)) {
+            return;
+        }
+
+        // Microsoft
+        progress.setStatus(SharedLocale.tr("profileSelection.status.microsoft"));
+        MicrosoftResponse microsoftResponse = refreshMicrosoftToken(account.getMicrosoftToken());
+        if (microsoftResponse == null || microsoftResponse.getAccessToken() == null) {
+            return;
+        }
+
+        account.setMicrosoftToken(microsoftResponse.getRefreshToken());
+
+        // Xbox
+        progress.setStatus(SharedLocale.tr("profileSelection.status.xbox"));
+        XboxResponse xboxToken = getXboxToken(microsoftResponse.getAccessToken());
+        if (xboxToken == null || xboxToken.getToken() == null || xboxToken.getUhs() == null) {
+            return;
+        }
+
+        account.setXboxToken(xboxToken.getToken());
+
+        refreshMinecraft(account, progress);
+    }
+
+    private static boolean refreshMinecraft(Account account, Progress progress) throws Exception {
+        // XSTS
+        progress.setStatus(SharedLocale.tr("profileSelection.status.xsts"));
+        XboxResponse xstsToken = getXSTSToken(account.getXboxToken());
+        if (xstsToken == null || xstsToken.getToken() == null || xstsToken.getUhs() == null) {
+            return false;
+        }
+
+        // Minecraft
+        progress.setStatus(SharedLocale.tr("profileSelection.status.minecraft"));
+        MinecraftResponse minecraftResponse = getMinecraftToken(xstsToken.getUhs(), xstsToken.getToken());
+        if (minecraftResponse == null || minecraftResponse.getAccessToken() == null) {
+            return false;
+        }
+
+        account.setAccessToken(minecraftResponse.getAccessToken());
+
+        // Minecraft Profile
+        progress.setStatus(SharedLocale.tr("profileSelection.status.profiles"));
+        Profile profile = getProfile(minecraftResponse.getAccessToken());
+        if (profile == null || profile.getId() == null || profile.getName() == null) {
+            return false;
+        }
+
+        return true;
+    }
+
     public static boolean authorize() throws Exception {
         URL url = HttpRequest.url("https://login.live.com/oauth20_authorize.srf"
                 + "?client_id=" + CLIENT_ID
@@ -187,7 +240,6 @@ public class MicrosoftIntegration {
                 .header("Accept", "application/json")
                 .bodyJson(request)
                 .execute()
-                .expectResponseCode(200)
                 .returnContent()
                 .asJson(XboxResponse.class);
     }
