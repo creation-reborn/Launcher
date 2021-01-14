@@ -289,7 +289,11 @@ public class ProfileSelectionDialog extends JDialog {
             }
 
             if (account.getType() == AccountType.MICROSOFT) {
-                MicrosoftIntegration.refresh(account, this);
+                if (account.getMicrosoftToken() != null) {
+                    MicrosoftIntegration.refresh(account, this);
+                } else {
+                    MicrosoftIntegration.login(account, this);
+                }
             } else if (account.getType() == AccountType.MOJANG) {
                 SharedLocale.tr("profileSelection.refreshingStatus");
                 MojangIntegration.refresh(account);
