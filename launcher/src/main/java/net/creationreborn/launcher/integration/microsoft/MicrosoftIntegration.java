@@ -69,6 +69,7 @@ public class MicrosoftIntegration {
             }
 
             account.setMicrosoftToken(microsoftResponse.getRefreshToken());
+            account.getUser().setId(microsoftResponse.getUserId());
             account.getUser().setUsername(microsoftResponse.getUserId());
 
             // Xbox
