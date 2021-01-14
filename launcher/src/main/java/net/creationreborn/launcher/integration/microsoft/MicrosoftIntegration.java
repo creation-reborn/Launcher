@@ -123,14 +123,26 @@ public class MicrosoftIntegration {
     }
 
     public static MicrosoftResponse getMicrosoftToken(String authorizationCode) throws Exception {
+        return getMicrosoftToken(HttpRequest.Form.form()
+                .add("client_id", CLIENT_ID)
+                .add("code", authorizationCode)
+                .add("grant_type", "authorization_code")
+                .add("redirect_uri", getRedirectUri()));
+    }
+
+    public static MicrosoftResponse refreshMicrosoftToken(String refreshToken) throws Exception {
+        return getMicrosoftToken(HttpRequest.Form.form()
+                .add("client_id", CLIENT_ID)
+                .add("refresh_token", refreshToken)
+                .add("grant_type", "refresh_token")
+                .add("redirect_uri", getRedirectUri()));
+    }
+
+    private static MicrosoftResponse getMicrosoftToken(HttpRequest.Form form) throws Exception {
         return HttpRequest
                 .post(HttpRequest.url("https://login.live.com/oauth20_token.srf"))
                 .header("Accept", "application/json")
-                .bodyForm(HttpRequest.Form.form()
-                        .add("client_id", CLIENT_ID)
-                        .add("code", authorizationCode)
-                        .add("grant_type", "authorization_code")
-                        .add("redirect_uri", getRedirectUri()))
+                .bodyForm(form)
                 .execute()
                 .expectResponseCode(200)
                 .returnContent()
