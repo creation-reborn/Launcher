@@ -278,9 +278,11 @@ public class LoginDialog extends JDialog {
         public Session call() throws AuthenticationException, IOException, InterruptedException {
             if (account.getType() == AccountType.MICROSOFT) {
                 MicrosoftIntegration.login(account, this);
-            } else {
+            } else if (account.getType() == AccountType.MOJANG) {
                 this.status = SharedLocale.tr("login.loggingInStatus");
                 MojangIntegration.login(account, password);
+            } else {
+                throw new UnsupportedOperationException(String.format("%s is not supported", account.getType()));
             }
 
             if (rememberAccountCheck.isSelected()) {

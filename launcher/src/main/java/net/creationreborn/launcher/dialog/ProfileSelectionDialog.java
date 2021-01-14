@@ -286,11 +286,17 @@ public class ProfileSelectionDialog extends JDialog {
 
         @Override
         public Session call() throws AuthenticationException, IOException, InterruptedException {
+            if (account.getType() == null) {
+                account.setType(AccountType.MOJANG);
+            }
+
             if (account.getType() == AccountType.MICROSOFT) {
                 MicrosoftIntegration.login(account, this);
-            } else {
+            } else if (account.getType() == AccountType.MOJANG) {
                 SharedLocale.tr("profileSelection.refreshingStatus");
                 MojangIntegration.refresh(account);
+            } else {
+                throw new UnsupportedOperationException(String.format("%s is not supported", account.getType()));
             }
 
             launcher.getAccounts().setCurrentAccount(account);
