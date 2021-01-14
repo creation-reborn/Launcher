@@ -31,7 +31,6 @@ import net.creationreborn.launcher.auth.Account;
 import net.creationreborn.launcher.auth.AccountList;
 import net.creationreborn.launcher.auth.AccountType;
 import net.creationreborn.launcher.integration.microsoft.MicrosoftIntegration;
-import net.creationreborn.launcher.integration.mojang.AuthenticationException;
 import net.creationreborn.launcher.integration.mojang.MojangIntegration;
 import net.creationreborn.launcher.integration.mojang.yggdrasil.Profile;
 import net.creationreborn.launcher.integration.mojang.yggdrasil.YggdrasilSession;
@@ -60,7 +59,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -285,7 +283,7 @@ public class ProfileSelectionDialog extends JDialog {
         }
 
         @Override
-        public Session call() throws AuthenticationException, IOException, InterruptedException {
+        public Session call() throws Exception {
             if (account.getType() == null) {
                 account.setType(AccountType.MOJANG);
             }

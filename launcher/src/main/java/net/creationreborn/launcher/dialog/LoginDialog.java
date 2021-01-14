@@ -32,7 +32,6 @@ import com.skcraft.launcher.util.SwingExecutor;
 import net.creationreborn.launcher.auth.Account;
 import net.creationreborn.launcher.auth.AccountType;
 import net.creationreborn.launcher.integration.microsoft.MicrosoftIntegration;
-import net.creationreborn.launcher.integration.mojang.AuthenticationException;
 import net.creationreborn.launcher.integration.mojang.MojangIntegration;
 import net.creationreborn.launcher.integration.mojang.yggdrasil.YggdrasilSession;
 import net.creationreborn.launcher.util.Progress;
@@ -59,7 +58,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
 
@@ -275,7 +273,7 @@ public class LoginDialog extends JDialog {
         }
 
         @Override
-        public Session call() throws AuthenticationException, IOException, InterruptedException {
+        public Session call() throws Exception {
             if (account.getType() == AccountType.MICROSOFT) {
                 MicrosoftIntegration.login(account, this);
             } else if (account.getType() == AccountType.MOJANG) {

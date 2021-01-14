@@ -39,7 +39,7 @@ public class MicrosoftIntegration {
     private static final String REDIRECT_URI = "http://127.0.0.1";
     private static final Server SERVER = new Server();
 
-    public static void login(Account account, Progress progress) {
+    public static void login(Account account, Progress progress) throws Exception {
         if (SERVER.isAlive()) {
             return;
         }
@@ -105,8 +105,6 @@ public class MicrosoftIntegration {
             account.getProfiles().add(profile);
             account.setCurrentProfile(profile);
             account.setAccessToken(minecraftResponse.getAccessToken());
-        } catch (Exception ex) {
-            SwingHelper.showErrorDialog(null, SharedLocale.tr("errors.genericError"), SharedLocale.tr("errorTitle"), ex);
         } finally {
             SERVER.stop();
         }
