@@ -73,7 +73,7 @@ public class MicrosoftIntegration {
             // Xbox
             progress.setStatus(SharedLocale.tr("login.status.xbox"));
             XboxResponse xboxToken = getXboxToken(microsoftResponse.getAccessToken());
-            if (xboxToken == null || xboxToken.getToken() == null || xboxToken.getUHS() == null) {
+            if (xboxToken == null || xboxToken.getToken() == null || xboxToken.getUhs() == null) {
                 SwingHelper.showErrorDialog(null, SharedLocale.tr("login.status.xbox.error"), SharedLocale.tr("errorTitle"));
                 return;
             }
@@ -81,14 +81,14 @@ public class MicrosoftIntegration {
             // XSTS
             progress.setStatus(SharedLocale.tr("login.status.xsts"));
             XboxResponse xstsToken = getXSTSToken(xboxToken.getToken());
-            if (xstsToken == null || xstsToken.getToken() == null || xstsToken.getUHS() == null) {
+            if (xstsToken == null || xstsToken.getToken() == null || xstsToken.getUhs() == null) {
                 SwingHelper.showErrorDialog(null, SharedLocale.tr("login.status.xsts.error"), SharedLocale.tr("errorTitle"));
                 return;
             }
 
             // Minecraft
             progress.setStatus(SharedLocale.tr("login.status.minecraft"));
-            MinecraftResponse minecraftResponse = getMinecraftToken(xstsToken.getUHS(), xstsToken.getToken());
+            MinecraftResponse minecraftResponse = getMinecraftToken(xstsToken.getUhs(), xstsToken.getToken());
             if (minecraftResponse == null || minecraftResponse.getAccessToken() == null) {
                 SwingHelper.showErrorDialog(null, SharedLocale.tr("login.status.minecraft.error"), SharedLocale.tr("errorTitle"));
                 return;

@@ -46,7 +46,7 @@ public class XboxResponse {
     @JsonProperty("Token")
     private String token;
 
-    public String getUHS() {
+    public String getUhs() {
         if (getDisplayClaims() == null) {
             return null;
         }
