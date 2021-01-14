@@ -17,7 +17,6 @@
 package net.creationreborn.launcher.dialog;
 
 import com.skcraft.concurrency.ObservableFuture;
-import com.skcraft.concurrency.ProgressObservable;
 import com.skcraft.launcher.Launcher;
 import com.skcraft.launcher.auth.Session;
 import com.skcraft.launcher.dialog.ProgressDialog;
@@ -30,10 +29,12 @@ import com.skcraft.launcher.util.SharedLocale;
 import com.skcraft.launcher.util.SwingExecutor;
 import net.creationreborn.launcher.auth.Account;
 import net.creationreborn.launcher.auth.AccountList;
-import net.creationreborn.launcher.integration.mojang.AuthenticationException;
+import net.creationreborn.launcher.auth.AccountType;
+import net.creationreborn.launcher.integration.microsoft.MicrosoftIntegration;
 import net.creationreborn.launcher.integration.mojang.MojangIntegration;
 import net.creationreborn.launcher.integration.mojang.yggdrasil.Profile;
 import net.creationreborn.launcher.integration.mojang.yggdrasil.YggdrasilSession;
+import net.creationreborn.launcher.util.Progress;
 import net.creationreborn.launcher.util.Toolbox;
 import org.apache.commons.lang3.StringUtils;
 
@@ -58,7 +59,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -249,8 +249,7 @@ public class ProfileSelectionDialog extends JDialog {
                 return;
             }
 
-            Profile profile = (Profile) anItem;
-            selectedProfile = profile;
+            selectedProfile = (Profile) anItem;
         }
 
         @Override
@@ -273,17 +272,35 @@ public class ProfileSelectionDialog extends JDialog {
         }
     }
 
-    public class RefreshCallable implements Callable<Session>, ProgressObservable {
+    public class RefreshCallable implements Callable<Session>, Progress {
 
         private final Account account;
+        private double progress;
+        private String status;
 
         private RefreshCallable(Account account) {
             this.account = account;
         }
 
         @Override
-        public Session call() throws AuthenticationException, IOException, InterruptedException {
-            MojangIntegration.refresh(account);
+        public Session call() throws Exception {
+            if (account.getType() == null) {
+                account.setType(AccountType.MOJANG);
+            }
+
+            if (account.getType() == AccountType.MICROSOFT) {
+                if (account.getMicrosoftToken() != null) {
+                    MicrosoftIntegration.refresh(account, this);
+                } else {
+                    MicrosoftIntegration.login(account, this);
+                }
+            } else if (account.getType() == AccountType.MOJANG) {
+                SharedLocale.tr("profileSelection.refreshingStatus");
+                MojangIntegration.refresh(account);
+            } else {
+                throw new UnsupportedOperationException(String.format("%s is not supported", account.getType()));
+            }
+
             launcher.getAccounts().setCurrentAccount(account);
             Persistence.commitAndForget(launcher.getAccounts());
             return account.getCurrentProfile().map(profile -> new YggdrasilSession(account, profile)).orElseThrow(IllegalStateException::new);
@@ -291,12 +308,22 @@ public class ProfileSelectionDialog extends JDialog {
 
         @Override
         public double getProgress() {
-            return -1;
+            return progress;
+        }
+
+        @Override
+        public void setProgress(double progress) {
+            this.progress = progress;
         }
 
         @Override
         public String getStatus() {
-            return SharedLocale.tr("profileSelection.refreshingStatus");
+            return status;
+        }
+
+        @Override
+        public void setStatus(String status) {
+            this.status = status;
         }
     }
 }

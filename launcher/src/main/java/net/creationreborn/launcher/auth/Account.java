@@ -17,6 +17,7 @@
 package net.creationreborn.launcher.auth;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.collect.Sets;
@@ -36,6 +37,7 @@ import java.util.Set;
         creatorVisibility = JsonAutoDetect.Visibility.NONE,
         fieldVisibility = JsonAutoDetect.Visibility.NONE
 )
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Account implements Comparable<Account> {
 
     @JsonProperty
@@ -48,11 +50,20 @@ public class Account implements Comparable<Account> {
     private String clientToken;
 
     @JsonProperty
+    private String microsoftToken;
+
+    @JsonProperty
     @JsonDeserialize(as = HashSet.class, contentAs = Profile.class)
     private Set<Profile> profiles = Sets.newHashSet();
 
     @JsonProperty
+    private AccountType type;
+
+    @JsonProperty
     private User user;
+
+    @JsonProperty
+    private String xboxToken;
 
     public Optional<Profile> getCurrentProfile() {
         if (StringUtils.isBlank(activeProfile)) {
@@ -93,6 +104,14 @@ public class Account implements Comparable<Account> {
         this.clientToken = clientToken;
     }
 
+    public String getMicrosoftToken() {
+        return microsoftToken;
+    }
+
+    public void setMicrosoftToken(String microsoftToken) {
+        this.microsoftToken = microsoftToken;
+    }
+
     public Set<Profile> getProfiles() {
         return profiles;
     }
@@ -101,12 +120,28 @@ public class Account implements Comparable<Account> {
         this.profiles = profiles;
     }
 
+    public AccountType getType() {
+        return type;
+    }
+
+    public void setType(AccountType type) {
+        this.type = type;
+    }
+
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getXboxToken() {
+        return xboxToken;
+    }
+
+    public void setXboxToken(String xboxToken) {
+        this.xboxToken = xboxToken;
     }
 
     @Override
@@ -130,7 +165,7 @@ public class Account implements Comparable<Account> {
         }
 
         Account account = (Account) obj;
-        return getUser().getUsername().equalsIgnoreCase(account.getUser().getUsername());
+        return getUser().getUsername() != null && getUser().getUsername().equalsIgnoreCase(account.getUser().getUsername());
     }
 
     @Override

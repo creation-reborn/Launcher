@@ -26,6 +26,7 @@ dependencies {
     compile("org.checkerframework:checker-qual:3.9.0")
     compile("org.apache.commons:commons-lang3:3.11")
     compile("org.apache.commons:commons-text:1.9")
+    compile("org.nanohttpd:nanohttpd:2.3.1")
 }
 
 processResources {

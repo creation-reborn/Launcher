@@ -49,6 +49,7 @@ public class AccountList {
     private String activeAccount;
 
     public synchronized void add(Account account) {
+        remove(account);
         accounts.add(account);
     }
 
@@ -62,19 +63,23 @@ public class AccountList {
         }
     }
 
-    public Account getOrCreate(String username) {
+    public Account create(AccountType type) {
+        Account account = new Account();
+        account.setClientToken(StringUtils.remove(UUID.randomUUID().toString(), '-'));
+        account.setUser(new User());
+        account.setType(type);
+        return account;
+    }
+
+    public Account getOrCreate(String username, AccountType type) {
         for (Account account : accounts) {
             if (StringUtils.isNotBlank(username) && username.equalsIgnoreCase(account.getUser().getUsername())) {
                 return account;
             }
         }
 
-        User user = new User();
-        user.setUsername(username);
-
-        Account account = new Account();
-        account.setClientToken(StringUtils.remove(UUID.randomUUID().toString(), '-'));
-        account.setUser(user);
+        Account account = create(type);
+        account.getUser().setUsername(username);
         return account;
     }
 
