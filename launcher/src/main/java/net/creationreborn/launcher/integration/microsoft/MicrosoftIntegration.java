@@ -68,6 +68,7 @@ public class MicrosoftIntegration {
                 return;
             }
 
+            account.setMicrosoftToken(microsoftResponse.getRefreshToken());
             account.getUser().setUsername(microsoftResponse.getUserId());
 
             // Xbox
@@ -77,6 +78,8 @@ public class MicrosoftIntegration {
                 SwingHelper.showErrorDialog(null, SharedLocale.tr("login.status.xbox.error"), SharedLocale.tr("errorTitle"));
                 return;
             }
+
+            account.setXboxToken(xboxToken.getToken());
 
             // XSTS
             progress.setStatus(SharedLocale.tr("login.status.xsts"));
@@ -94,6 +97,8 @@ public class MicrosoftIntegration {
                 return;
             }
 
+            account.setAccessToken(minecraftResponse.getAccessToken());
+
             // Minecraft Profile
             progress.setStatus(SharedLocale.tr("login.status.profiles"));
             Profile profile = getProfile(minecraftResponse.getAccessToken());
@@ -104,7 +109,6 @@ public class MicrosoftIntegration {
 
             account.getProfiles().add(profile);
             account.setCurrentProfile(profile);
-            account.setAccessToken(minecraftResponse.getAccessToken());
         } finally {
             SERVER.stop();
         }

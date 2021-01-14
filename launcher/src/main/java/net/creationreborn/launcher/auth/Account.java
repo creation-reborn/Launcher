@@ -48,14 +48,20 @@ public class Account implements Comparable<Account> {
     private String clientToken;
 
     @JsonProperty
+    private String microsoftToken;
+
+    @JsonProperty
     @JsonDeserialize(as = HashSet.class, contentAs = Profile.class)
     private Set<Profile> profiles = Sets.newHashSet();
+
+    @JsonProperty
+    private AccountType type;
 
     @JsonProperty
     private User user;
 
     @JsonProperty
-    private AccountType type;
+    private String xboxToken;
 
     public Optional<Profile> getCurrentProfile() {
         if (StringUtils.isBlank(activeProfile)) {
@@ -96,12 +102,28 @@ public class Account implements Comparable<Account> {
         this.clientToken = clientToken;
     }
 
+    public String getMicrosoftToken() {
+        return microsoftToken;
+    }
+
+    public void setMicrosoftToken(String microsoftToken) {
+        this.microsoftToken = microsoftToken;
+    }
+
     public Set<Profile> getProfiles() {
         return profiles;
     }
 
     public void setProfiles(Set<Profile> profiles) {
         this.profiles = profiles;
+    }
+
+    public AccountType getType() {
+        return type;
+    }
+
+    public void setType(AccountType type) {
+        this.type = type;
     }
 
     public User getUser() {
@@ -112,12 +134,12 @@ public class Account implements Comparable<Account> {
         this.user = user;
     }
 
-    public AccountType getType() {
-        return type;
+    public String getXboxToken() {
+        return xboxToken;
     }
 
-    public void setType(AccountType type) {
-        this.type = type;
+    public void setXboxToken(String xboxToken) {
+        this.xboxToken = xboxToken;
     }
 
     @Override
