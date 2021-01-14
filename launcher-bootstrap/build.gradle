@@ -26,7 +26,10 @@ task devJar(type: Jar, dependsOn: shadowJar) {
     doFirst {
         archiveClassifier.set("DEV")
         manifest {
-            attributes("Specification-Title": "development")
+            attributes(
+                    "Main-Class": "com.skcraft.launcher.Bootstrap",
+                    "Specification-Title": "development"
+            )
         }
         from zipTree(shadowJar.getArchiveFile())
     }
@@ -38,7 +41,10 @@ artifacts {
 
 jar {
     manifest {
-        attributes("Specification-Title": "release")
+        attributes(
+                "Main-Class": "com.skcraft.launcher.Bootstrap",
+                "Specification-Title": "release"
+        )
     }
 }
 
