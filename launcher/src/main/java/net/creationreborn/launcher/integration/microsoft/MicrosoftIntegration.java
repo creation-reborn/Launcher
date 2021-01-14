@@ -20,7 +20,6 @@ import com.skcraft.launcher.swing.SwingHelper;
 import com.skcraft.launcher.util.HttpRequest;
 import com.skcraft.launcher.util.SharedLocale;
 import net.creationreborn.launcher.auth.Account;
-import net.creationreborn.launcher.integration.microsoft.entity.request.MicrosoftRequest;
 import net.creationreborn.launcher.integration.microsoft.entity.request.MinecraftRequest;
 import net.creationreborn.launcher.integration.microsoft.entity.request.XboxRequest;
 import net.creationreborn.launcher.integration.microsoft.entity.response.MicrosoftResponse;
@@ -124,11 +123,6 @@ public class MicrosoftIntegration {
     }
 
     public static MicrosoftResponse getMicrosoftToken(String authorizationCode) throws Exception {
-        MicrosoftRequest request = new MicrosoftRequest();
-        request.setClientId(CLIENT_ID);
-        request.setCode(authorizationCode);
-        request.setGrantType("authorization_code");
-
         return HttpRequest
                 .post(HttpRequest.url("https://login.live.com/oauth20_token.srf"))
                 .header("Accept", "application/json")
