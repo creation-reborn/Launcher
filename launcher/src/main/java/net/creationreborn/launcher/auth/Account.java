@@ -17,6 +17,7 @@
 package net.creationreborn.launcher.auth;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.collect.Sets;
@@ -36,6 +37,7 @@ import java.util.Set;
         creatorVisibility = JsonAutoDetect.Visibility.NONE,
         fieldVisibility = JsonAutoDetect.Visibility.NONE
 )
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Account implements Comparable<Account> {
 
     @JsonProperty
