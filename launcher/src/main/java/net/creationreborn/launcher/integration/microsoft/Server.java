@@ -68,7 +68,7 @@ public class Server extends NanoHTTPD {
         }
 
         Response response = newFixedLengthResponse(Response.Status.TEMPORARY_REDIRECT, MIME_HTML, null);
-        response.addHeader("Location", "https://launcher.creationreborn.net/callback.html?error=" + error + "&error_description=" + errorDescription);
+        response.addHeader("Location", "https://launcher.creationreborn.net/callback?error=" + error + "&error_description=" + errorDescription);
         return response;
     }
 
@@ -79,7 +79,7 @@ public class Server extends NanoHTTPD {
         }
 
         Response response = newFixedLengthResponse(Response.Status.TEMPORARY_REDIRECT, MIME_HTML, null);
-        response.addHeader("Location", "https://launcher.creationreborn.net/callback.html");
+        response.addHeader("Location", "https://launcher.creationreborn.net/callback");
         return response;
     }
 
