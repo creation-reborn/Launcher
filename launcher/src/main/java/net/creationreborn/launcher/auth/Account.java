@@ -54,6 +54,9 @@ public class Account implements Comparable<Account> {
     @JsonProperty
     private User user;
 
+    @JsonProperty
+    private AccountType type;
+
     public Optional<Profile> getCurrentProfile() {
         if (StringUtils.isBlank(activeProfile)) {
             return Optional.empty();
@@ -109,6 +112,14 @@ public class Account implements Comparable<Account> {
         this.user = user;
     }
 
+    public AccountType getType() {
+        return type;
+    }
+
+    public void setType(AccountType type) {
+        this.type = type;
+    }
+
     @Override
     public int compareTo(Account o) {
         return 0;
@@ -130,7 +141,7 @@ public class Account implements Comparable<Account> {
         }
 
         Account account = (Account) obj;
-        return getUser().getUsername().equalsIgnoreCase(account.getUser().getUsername());
+        return getUser().getUsername() != null && getUser().getUsername().equalsIgnoreCase(account.getUser().getUsername());
     }
 
     @Override

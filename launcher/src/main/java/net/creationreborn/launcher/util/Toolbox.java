@@ -31,6 +31,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -48,6 +49,22 @@ public class Toolbox {
      */
     public static String filter(String string) {
         return RegExUtils.replaceAll(string, "[^\\x20-\\x7E\\x0A\\x0D]", "");
+    }
+
+    public static <T> T first(List<T> list) {
+        if (list != null && !list.isEmpty()) {
+            return list.get(0);
+        }
+
+        return null;
+    }
+
+    public static String join(List<? extends CharSequence> list) {
+        if (list != null) {
+            return String.join("\n", list);
+        }
+
+        return null;
     }
 
     public static Session getSession(Window window, Launcher launcher) {

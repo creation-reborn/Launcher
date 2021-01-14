@@ -17,7 +17,6 @@
 package net.creationreborn.launcher.dialog;
 
 import com.skcraft.concurrency.ObservableFuture;
-import com.skcraft.concurrency.ProgressObservable;
 import com.skcraft.launcher.Launcher;
 import com.skcraft.launcher.auth.Session;
 import com.skcraft.launcher.dialog.ProgressDialog;
@@ -31,15 +30,22 @@ import com.skcraft.launcher.swing.TextFieldPopupMenu;
 import com.skcraft.launcher.util.SharedLocale;
 import com.skcraft.launcher.util.SwingExecutor;
 import net.creationreborn.launcher.auth.Account;
+import net.creationreborn.launcher.auth.AccountType;
+import net.creationreborn.launcher.integration.microsoft.MicrosoftIntegration;
 import net.creationreborn.launcher.integration.mojang.AuthenticationException;
 import net.creationreborn.launcher.integration.mojang.MojangIntegration;
 import net.creationreborn.launcher.integration.mojang.yggdrasil.YggdrasilSession;
+import net.creationreborn.launcher.util.Progress;
 import net.creationreborn.launcher.util.Toolbox;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
@@ -62,6 +68,7 @@ public class LoginDialog extends JDialog {
     private final Launcher launcher;
     private final JTextField usernameField = new JTextField();
     private final JPasswordField passwordField = new JPasswordField();
+    private final JComboBox<AccountType> accountTypes = new JComboBox<AccountType>();
     private final JCheckBox rememberAccountCheck = new JCheckBox(SharedLocale.tr("login.rememberAccount"));
     private final LinkButton recoverButton = new LinkButton(SharedLocale.tr("login.recoverAccount"));
     private final JButton loginButton = new JButton(SharedLocale.tr("login.login"));
@@ -94,13 +101,21 @@ public class LoginDialog extends JDialog {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent event) {
+                removeListeners();
                 dispose();
             }
         });
     }
 
+    private void removeListeners() {
+        accountTypes.setModel(new DefaultComboBoxModel<>());
+    }
+
     @SuppressWarnings("Duplicates")
     private void initComponents() {
+        accountTypes.setModel(new AccountTypeListModel());
+        accountTypes.setFocusable(false);
+
         rememberAccountCheck.setBorder(BorderFactory.createEmptyBorder());
         rememberAccountCheck.setSelected(true);
 
@@ -108,6 +123,7 @@ public class LoginDialog extends JDialog {
 
         formPanel.addRow(new JLabel(SharedLocale.tr("login.username")), usernameField);
         formPanel.addRow(new JLabel(SharedLocale.tr("login.password")), passwordField);
+        formPanel.addRow(new JLabel(SharedLocale.tr("login.accountTypes")), accountTypes);
         formPanel.addRow(new JLabel(), rememberAccountCheck);
         buttonsPanel.setBorder(BorderFactory.createEmptyBorder(26, 13, 13, 13));
 
@@ -142,6 +158,12 @@ public class LoginDialog extends JDialog {
     }
 
     private void prepareLogin() {
+        if (accountTypes.getSelectedItem() == AccountType.MICROSOFT) {
+            Account account = launcher.getAccounts().create(AccountType.MICROSOFT);
+            attemptLogin(account, null);
+            return;
+        }
+
         if (StringUtils.isBlank(usernameField.getText())) {
             SwingHelper.showErrorDialog(this, SharedLocale.tr("login.noLoginError"), SharedLocale.tr("login.noLoginTitle"));
             return;
@@ -155,7 +177,7 @@ public class LoginDialog extends JDialog {
             return;
         }
 
-        Account account = launcher.getAccounts().getOrCreate(usernameField.getText());
+        Account account = launcher.getAccounts().getOrCreate(usernameField.getText(), AccountType.MOJANG);
         attemptLogin(account, password);
     }
 
@@ -193,19 +215,69 @@ public class LoginDialog extends JDialog {
         return session;
     }
 
-    public class LoginCallable implements Callable<Session>, ProgressObservable {
+    public class AccountTypeListModel extends AbstractListModel<AccountType> implements ComboBoxModel<AccountType> {
+
+        private AccountType selectedAccountType;
+
+        public AccountTypeListModel() {
+            this.selectedAccountType = AccountType.MOJANG;
+        }
+
+        @Override
+        public void setSelectedItem(Object anItem) {
+            if (!(anItem instanceof AccountType)) {
+                this.selectedAccountType = null;
+                return;
+            }
+
+            this.selectedAccountType = (AccountType) anItem;
+            usernameField.setEnabled(selectedAccountType != AccountType.MICROSOFT);
+            passwordField.setEnabled(selectedAccountType != AccountType.MICROSOFT);
+        }
+
+        @Override
+        public Object getSelectedItem() {
+            return selectedAccountType;
+        }
+
+        @Override
+        public int getSize() {
+            return AccountType.VALUES.length;
+        }
+
+        @Override
+        public AccountType getElementAt(int index) {
+            if (index < 0 || index >= getSize()) {
+                return null;
+            }
+
+            return AccountType.VALUES[index];
+        }
+    }
+
+    public class LoginCallable implements Callable<Session>, Progress {
 
         private final Account account;
         private final String password;
+        private double progress;
+        private String status;
 
         private LoginCallable(Account account, String password) {
             this.account = account;
             this.password = password;
+            this.progress = -1;
+            this.status = SharedLocale.tr("login.loggingInTitle");
         }
 
         @Override
         public Session call() throws AuthenticationException, IOException, InterruptedException {
-            MojangIntegration.login(account, password);
+            if (account.getType() == AccountType.MICROSOFT) {
+                MicrosoftIntegration.login(account, this);
+            } else {
+                this.status = SharedLocale.tr("login.loggingInStatus");
+                MojangIntegration.login(account, password);
+            }
+
             if (rememberAccountCheck.isSelected()) {
                 launcher.getAccounts().add(account);
                 launcher.getAccounts().setCurrentAccount(account);
@@ -219,12 +291,22 @@ public class LoginDialog extends JDialog {
 
         @Override
         public double getProgress() {
-            return -1;
+            return progress;
+        }
+
+        @Override
+        public void setProgress(double progress) {
+            this.progress = progress;
         }
 
         @Override
         public String getStatus() {
-            return SharedLocale.tr("login.loggingInStatus");
+            return status;
+        }
+
+        @Override
+        public void setStatus(String status) {
+            this.status = status;
         }
     }
 }
