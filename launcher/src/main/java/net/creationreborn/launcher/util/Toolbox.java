@@ -21,10 +21,9 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.skcraft.launcher.Launcher;
 import com.skcraft.launcher.auth.Session;
-import net.creationreborn.launcher.auth.Account;
+import net.creationreborn.launcher.auth.AccountType;
 import net.creationreborn.launcher.dialog.LoginDialog;
 import net.creationreborn.launcher.dialog.ProfileSelectionDialog;
-import net.creationreborn.launcher.integration.mojang.yggdrasil.User;
 import org.apache.commons.lang3.RegExUtils;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -77,10 +76,15 @@ public class Toolbox {
         }
 
         LoginDialog loginDialog = new LoginDialog(window, launcher);
-        launcher.getAccounts().getCurrentAccount()
-                .map(Account::getUser)
-                .map(User::getUsername)
-                .ifPresent(loginDialog::setUsername);
+        launcher.getAccounts().getCurrentAccount().ifPresent(account -> {
+            if (account.getUser() != null && account.getType() == AccountType.MOJANG) {
+                loginDialog.setUsername(account.getUser().getUsername());
+            }
+
+            if (account.getType() != null) {
+                loginDialog.setAccountType(account.getType());
+            }
+        });
 
         loginDialog.setVisible(true);
         return loginDialog.getSession();

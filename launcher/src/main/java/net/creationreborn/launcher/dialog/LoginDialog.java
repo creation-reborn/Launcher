@@ -201,6 +201,11 @@ public class LoginDialog extends JDialog {
         rememberAccountCheck.setSelected(true);
     }
 
+    public void setAccountType(AccountType accountType) {
+        accountTypes.setSelectedItem(accountType);
+        rememberAccountCheck.setSelected(true);
+    }
+
     public void setResult(boolean cancelled, Session session) {
         this.cancelled = cancelled;
         this.session = session;
