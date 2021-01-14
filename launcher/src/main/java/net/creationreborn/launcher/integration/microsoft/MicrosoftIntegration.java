@@ -69,6 +69,8 @@ public class MicrosoftIntegration {
                 return;
             }
 
+            account.getUser().setUsername(microsoftResponse.getUserId());
+
             // Xbox
             progress.setStatus(SharedLocale.tr("login.status.xbox"));
             XboxResponse xboxToken = getXboxToken(microsoftResponse.getAccessToken());

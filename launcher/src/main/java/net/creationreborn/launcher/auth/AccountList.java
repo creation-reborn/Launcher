@@ -49,6 +49,7 @@ public class AccountList {
     private String activeAccount;
 
     public synchronized void add(Account account) {
+        remove(account);
         accounts.add(account);
     }
 
