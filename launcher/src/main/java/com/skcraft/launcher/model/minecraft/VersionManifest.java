@@ -51,6 +51,14 @@ public class VersionManifest {
             return;
         }
 
+        if (minecraftArguments.getGameArguments() == null) {
+            minecraftArguments.setGameArguments(new ArrayList<>());
+        }
+
+        if (minecraftArguments.getJvmArguments() == null) {
+            minecraftArguments.setJvmArguments(new ArrayList<>());
+        }
+
         this.arguments = minecraftArguments;
     }
 
