@@ -101,12 +101,7 @@ public class Downloader implements Runnable, ProgressObservable {
 
             checkInterrupted();
 
-            boolean packed = true;
-            Object packedCheck = ((JSONObject) object).get("packed");
-            if (packedCheck == Boolean.FALSE) {
-                packed = false;
-            }
-
+            boolean packed = jsonElement.getAsJsonObject().get("packed").getAsBoolean();
             String extension = packed ? ".jar.pack" : ".jar";
             File finalFile = new File(bootstrap.getBinariesDir(), System.currentTimeMillis() + extension);
             File tempFile = new File(finalFile.getParentFile(), finalFile.getName() + ".tmp");

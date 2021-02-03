@@ -17,7 +17,7 @@ public class FileUrlRedirect {
 	private String hash;
 
 	public void readFromFile(File file) throws IOException {
-		List<String> lines = Files.readLines(file, Charset.defaultCharset());
+		List<String> lines = Files.asCharSource(file, Charset.defaultCharset()).readLines();
 		this.url = url(lines.get(0));
 
 		if (lines.size() > 1) {
@@ -32,7 +32,7 @@ public class FileUrlRedirect {
 	public void writeToFile(File file) throws IOException {
 		String entry = url.toString() + '\n' + hash;
 
-		Files.write(entry, file, Charset.defaultCharset());
+		Files.asCharSink(file, Charset.defaultCharset()).write(entry);
 	}
 
 	public static FileUrlRedirect fromFile(File file) throws IOException {
