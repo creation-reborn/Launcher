@@ -106,11 +106,15 @@ public class PackageBuilder {
     public void scan(File dir) throws IOException {
         logSection("Scanning for .info.json files...");
 
-        FileInfoScanner scanner = new FileInfoScanner(mapper);
-        scanner.walk(dir);
-        for (FeaturePattern pattern : scanner.getPatterns()) {
+        FileInfoScanner infoScanner = new FileInfoScanner(mapper);
+        infoScanner.walk(dir);
+        for (FeaturePattern pattern : infoScanner.getPatterns()) {
             applicator.register(pattern);
         }
+
+        logSection("Scanning for .url.txt files...");
+        FileUrlScanner urlScanner = new FileUrlScanner();
+        urlScanner.walk(dir);
     }
 
     public void addFiles(File dir, File destDir) throws IOException {
@@ -252,7 +256,7 @@ public class PackageBuilder {
         // Some repositories compress their files
         List<Compressor> compressors = BuilderUtils.getCompressors(baseUrl);
         for (Compressor compressor : Lists.reverse(compressors)) {
-            url = new URL(url, compressor.transformPathname(artifact.getPath()));
+            url = new URL(compressor.transformPathname(url.toString()));
         }
 
         File tempFile = File.createTempFile("launcherlib", null);

@@ -22,7 +22,7 @@ import java.util.concurrent.Callable;
  * if there is an update to be downloaded.
  */
 @Log
-public class UpdateChecker implements Callable<URL> {
+public class UpdateChecker implements Callable<LatestVersionInfo> {
 
     private final Launcher launcher;
 
@@ -31,7 +31,7 @@ public class UpdateChecker implements Callable<URL> {
     }
 
     @Override
-    public URL call() throws Exception {
+    public LatestVersionInfo call() throws Exception {
         try {
             UpdateChecker.log.info("Checking for update...");
 
@@ -57,7 +57,7 @@ public class UpdateChecker implements Callable<URL> {
 
             if (latest.compareTo(current) >= 1) {
                 UpdateChecker.log.info("Update available at " + versionInfo.getUrl());
-                return versionInfo.getUrl();
+                return versionInfo;
             } else {
                 UpdateChecker.log.info("No update required.");
                 return null;

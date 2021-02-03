@@ -13,6 +13,8 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.skcraft.launcher.util.Environment;
 import lombok.Data;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import java.util.List;
 import java.util.Map;
@@ -67,10 +69,12 @@ public class Library {
                     return null;
             }
 
-            return nativeString.replace("${arch}", environment.getArchBits());
-        } else {
-            return null;
+            if (nativeString != null) {
+                return nativeString.replace("${arch}", environment.getArchBits());
+            }
         }
+
+        return null;
     }
 
     public void ensureDownloadsExist() {
@@ -120,19 +124,25 @@ public class Library {
 
         Library library = (Library) o;
 
-        if (name != null ? !name.equals(library.name) : library.name != null)
-            return false;
-
+        EqualsBuilder builder = new EqualsBuilder();
+        builder.append(name, library.getName());
         // If libraries have different natives lists, they should be separate.
-        if (natives != null ? !natives.equals(library.natives) : library.natives != null)
-            return false;
+        builder.append(natives, library.getNatives());
 
-        return true;
+        return builder.isEquals();
     }
 
     @Override
     public int hashCode() {
-        return name != null ? name.hashCode() : 0;
+        HashCodeBuilder builder = new HashCodeBuilder(45, 23);
+
+        if (name != null)
+            builder.append(name);
+
+        if (natives != null)
+            builder.append(natives);
+
+        return builder.toHashCode();
     }
 
     @Data
@@ -180,12 +190,29 @@ public class Library {
         Artifact virtualArtifact = new Artifact();
 
         virtualArtifact.setUrl(url);
-        virtualArtifact.setPath(mavenNameToPath(name));
+        if (getName() != null) {
+            virtualArtifact.setPath(mavenNameToPath(getName()));
+        }
 
         Downloads downloads = new Downloads();
         downloads.setArtifact(virtualArtifact);
 
         setDownloads(downloads);
+    }
+
+    public void setName(String name) {
+        this.name = name;
+
+        // [DEEP SIGH]
+        // Sometimes 'name' comes after 'url', and I can't figure out how to get Jackson to enforce order
+        // So we have to do this silly check to make sure we have a path.
+        if (getDownloads() != null) {
+            if (getDownloads().getArtifact() == null) return;
+
+            if (getDownloads().getArtifact().getPath() == null) {
+                getDownloads().getArtifact().setPath(mavenNameToPath(name));
+            }
+        }
     }
 
     /**
@@ -194,7 +221,7 @@ public class Library {
      * be fetched from the Minecraft library source; this setter handles that.
      */
     public void setServerreq(boolean value) {
-        if (value) {
+        if (value && getDownloads() == null) {
             setUrl("https://libraries.minecraft.net/"); // TODO get this from properties?
         }
     }
